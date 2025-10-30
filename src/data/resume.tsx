@@ -312,8 +312,8 @@ export const DATA = {
       href: "https://www.justdial.com/Mumbai/Our-Lady-Of-Salvation-High-School-Opposite-Portugues-Church-Dadar-West/022P7700730_BZDET", // Update with actual institution URL
       degree: "SSC | 84%",
       logoUrl: "/school.webp", // Update with actual logo path
-      start: "2020",
-      end: "2023",
+      start: "2015",
+      end: "2020",
     },
   ],
   projects: [
