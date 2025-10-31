@@ -33,6 +33,22 @@
     --ring: 0 0% 3.9%;
 
     --radius: 0.5rem;
+
+    /* --selection-bg: #06b6d4; Cyan */
+    /* --selection-color: #ffffff; */
+    
+    /* Light mode - Fresh green */
+    /* --selection-bg: #10b981; Emerald */
+    /* --selection-color: #ffffff; */
+
+    /* Light mode - Solid black */
+    --selection-bg: #000000;
+    --selection-color: #ffffff;
+
+    /* Light mode - Slate with contrast */
+    /* --selection-bg: #475569; Medium slate */
+    /* --selection-color: #ffffff; */
+
   }
 
   .dark {
@@ -63,7 +79,44 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
+    /* --selection-bg: #164e63; Dark cyan */
+    /* --selection-color: #22d3ee; Light cyan */
+
+    /* Dark mode - Soft emerald */
+    /* --selection-bg: #064e3b; Deep emerald */
+    /* --selection-color: #a7f3d0; Light mint */
+  
+    /* Dark mode - Solid white */
+    --selection-bg: #ffffff;
+    --selection-color: #000000;
+
+    /* Dark mode - Lighter slate */
+    /* --selection-bg: #cbd5e1; Light slate */
+    /* --selection-color: #1e293b; Dark slate */
   }
+}
+
+/* Prevent selection and dragging for images, videos, svgs, and icons */
+img,
+video,
+svg {
+  user-select: none;      /* Disable text selection */
+  -webkit-user-drag: none; /* Disable drag on WebKit browsers (Chrome, Safari) */
+  pointer-events: auto;   /* Keep normal click/tap behavior */
+}
+
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-color);
+}
+
+/* For input and textarea elements */
+input::selection,
+textarea::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-color);
 }
 
 @layer base {
