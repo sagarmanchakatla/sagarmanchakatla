@@ -1,0 +1,181 @@
+---
+title: "Connect.io: Web Conferencing for Classrooms, Built With Next.js and Stream SDK"
+publishedAt: "2024-07-01"
+summary: "How I built Connect.io—a Next.js powered education web conferencing app leveraging Stream's SDK for scalable video and audio rooms, overcoming WebRTC mesh limitations and bringing virtual classrooms to life."
+tags: [
+  "nextjs",
+  "stream-sdk",
+  "webrtc",
+  "video-conferencing",
+  "education-tech",
+  "websockets",
+]
+---
+
+# 🎓 Connect.io: Scalable Web Conferencing for Education Classrooms  
+
+## 🚀 Project Overview
+
+Connect.io is a web application designed for **online student-teacher classrooms**. Built on Next.js, it leverages [Stream's cloud Video SDK](https://getstream.io) to deliver robust audio/video conferencing rooms—overcoming deployment challenges with vanilla WebRTC mesh peer-to-peer connections.
+
+Github: [Connect.io-NextJs by sagarmanchakatla](https://github.com/sagarmanchakatla/Connect.io-NextJs)
+
+---
+
+## 💡 Original Vision:  
+My initial goal was simple:  
+Create a custom solution where students and teachers interact in real-time using the browser—no plugins, just modern APIs. The first attempts utilized native **WebSocket signaling** and direct **WebRTC mesh** peer-to-peer connections.
+
+### ❌ Issues With WebRTC Mesh:
+
+Mesh topology means every participant creates a direct connection to every other.  
+- **Bandwidth Overload:** Each user must send N-1 media streams, quickly saturating uplink for more than 3-4 people.
+- **CPU & Memory Strain:** Each peer manages multiple media encoders/decoders.
+- **Quality Degradation:** Increased packet loss, stability problems as users join/leave.
+- **Firewall/NAT Issues:** Peer discovery fails for users behind strict NATs or carrier-grade NAT (CGNAT).
+- **Scaling Limits:** Mesh is unsuited for classrooms (5+ participants) [28].
+
+> **Tip:** Mesh works for 1:1 and very small groups, but classrooms need SFU/MCU or managed solutions [28][20].
+
+---
+
+## 🔎 Stream SDK: Cloud-Powered Conferencing
+
+### What is Stream SDK?
+Stream SDK provides secure, scalable APIs for chat, video, and feeds. For video rooms, it abstracts the complexity of signaling, media routing, and edge connectivity. Instead of mesh, it powers sessions using global infrastructure optimized for education and collaboration [19][27].
+
+#### ✨ Features for Education:
+- **Low latency AV streaming**
+- **Global scaling (20+ rooms, thousands of users)**
+- **Security (TLS/SRTP, user tokens)**
+- **Recording, screen sharing**
+- **Pre-built UI layouts and hooks**
+- **Breakout rooms, chat, raising hands, whiteboard (with integrations)**
+- **Cross-device (desktop, mobile, browser)** [24][27]
+
+#### 🌍 Architecturally:
+- SFU (Selective Forwarding Unit) or managed relaying is used instead of mesh.
+- All events, media, and signals are sent through Stream's servers for reliability.
+- Handles NAT traversal, ICE, STUN/TURN automatically [19][26].
+
+---
+
+## 🛠️ Building Connect.io With Next.js + Stream SDK
+
+The project structure illustrates modern modular Next.js architecture, with key code for meeting management and context providers.
+
+```js
+content-pipeline/
+├── app/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── providers/
+│   ├── constants/
+│   └── middleware.ts
+```
+
+### Sample: Meeting Room Component
+
+```js
+// components/MeetingRoom.tsx
+import { StreamProvider } from "../providers/StreamClientProvider";
+import { useGetCallById } from "../hooks/useGetCallById";
+
+export default function MeetingRoom({ meetingId }) {
+  const callData = useGetCallById(meetingId);
+
+  return (
+    <StreamProvider>
+      {/* Stream SDK handles video/audio connections here */}
+      <div className="room">
+        {callData && <VideoRoom call={callData} />}
+      </div>
+    </StreamProvider>
+  );
+}
+```
+
+### Sample: Provider Setup
+
+```js
+// providers/StreamClientProvider.tsx
+import { StreamVideoProvider } from "@stream-io/video-react-sdk";
+
+export const StreamProvider = ({ children }) => (
+  <StreamVideoProvider apiKey={process.env.NEXT_PUBLIC_STREAM_KEY}>
+    {children}
+  </StreamVideoProvider>
+);
+```
+
+### Meeting Setup Flow
+
+```js
+// components/MeetingSetup.tsx
+import { createMeeting } from "../actions/stream.actions";
+...
+<button onClick={createMeeting}>Start Meeting</button>
+```
+
+### Listing and Joining Calls
+
+```js
+// components/CallList.tsx
+import { useGetCalls } from "../hooks/useGetCalls";
+const calls = useGetCalls();
+return (
+  <ul>
+    {calls.map((call) => (
+      <li key={call.id}>
+        <a href={`/meeting/${call.id}`}>{call.name}</a>
+      </li>
+    ))}
+  </ul>
+);
+```
+
+---
+
+## 🏛️ Technical Lessons & Takeaways
+
+- **Bandwidth constraints:** WebRTC mesh cannot scale for classrooms. Cloud relaying/SFU is mandatory.
+- **Stream SDK:** Handles ICE, signaling, NAT, relays, and scaling so you focus on UX.
+- **Next.js:** Great for modular, server-side rendered classrooms and meeting management.
+- **Security:** Provider-level auth, user tokens, SRTP encryption, privacy compliance [24].
+- **UI/UX:** SDK ships with customizable out-of-the-box video UI, but is highly extensible.
+
+---
+
+## 🧑‍🎓 Sample Use Cases
+
+- Online classroom (student/teacher)
+- Group study rooms
+- Teacher-parent meetings
+- Virtual labs, presentations
+
+---
+
+## 📦 Getting Started  
+Check out the [Connect.io GitHub repo](https://github.com/sagarmanchakatla/Connect.io-NextJs):
+
+```js
+git clone https://github.com/sagarmanchakatla/Connect.io-NextJs
+cd Connect.io-NextJs
+npm install
+npm run dev
+# Configure env with your Stream Video API key
+```
+
+> Want to build your own? Try [Stream's Video SDK docs](https://getstream.io/video/) for free developer minutes, templates, and integration guides.
+
+---
+
+## 🤝 Connect and Explore
+
+Got questions, ideas, or want to collaborate?  
+Find me on [LinkedIn](https://www.linkedin.com/in/sagar-manchakatla) or contribute on [GitHub](https://github.com/sagarmanchakatla/Connect.io-NextJs).
+
+---
+
+_Cloud-based SDKs like Stream bridge the gap between ambitious real-time education apps and production-ready scale. Connect.io is proof: by standing on the shoulders of robust platforms, you unlock the future of learning—even as the web grows more complex._  
